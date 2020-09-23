@@ -1,0 +1,140 @@
+openapi: 3.0.1
+info:
+  title: Test API
+  description: "Test API for .NET developer"
+  license:
+    name: Private
+  version: 1.0.0
+servers:
+  - url: /
+tags:
+  - name: auth
+    description: Authetication operations
+  - name: files
+    description: A hierarchy of folders and files
+paths:
+  /auth:
+    post:
+      tags:
+        - auth
+      summary: Authenticates user
+      operationId: authentication
+      requestBody:
+        description: Authetication data
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Auth"
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        400:
+          description: Invalid input
+          content: {}
+        401:
+          description: Invalid username/password supplied
+          content: {}
+  /files:
+    get:
+      tags:
+        - files
+      summary: Get the list of available files and folders. For anonymous users returns only public files, for authenticated users returns also user files.
+      operationId: getFiles
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/File"
+      security:
+        - {} # public access possible
+        - bearerAuth: []
+    post:
+      tags:
+        - files
+      summary: Add a new file. For admins, the file is added to the public files. For non admins, the file is added to the user's files.
+      operationId: addFile
+      requestBody:
+        description: File object that needs to be added
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/File"
+        required: true
+      responses:
+        400:
+          description: Invalid input
+          content: {}
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          description: File type
+          enum:
+            - file
+            - folder
+        parentID:
+          type: string
+          description: ID of parent foleder, or null if it's a root file
+        size:
+          type: integer
+          description: File size in kilo bytes, only required for files not for folders
+          format: int64
+        url:
+          type: string
+      required:
+        - id
+        - type
+    Auth:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - token
+        - user
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        role:
+          type: string
+          description: User role
+          enum:
+            - admin
+            - user
+        name:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
