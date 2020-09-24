@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Test API
-  description: "Test API for .NET developer"
+  description: "Test API developers"
   license:
     name: Private
   version: 1.0.0
@@ -90,16 +90,18 @@ components:
             - folder
         parentID:
           type: string
+          nullable: true
           description: ID of parent foleder, or null if it's a root file
         size:
           type: integer
-          description: File size in kilo bytes, only required for files not for folders
+          description: File size in bytes, only required for files not for folders
           format: int64
         url:
           type: string
       required:
         - id
         - type
+        - parentID
     Auth:
       type: object
       properties:
@@ -133,6 +135,10 @@ components:
             - user
         name:
           type: string
+      required:
+        - id
+        - role
+        - name
   securitySchemes:
     bearerAuth:
       type: http
