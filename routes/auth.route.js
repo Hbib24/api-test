@@ -38,7 +38,7 @@ router.post('/', (req, res) => {
 
         res
           .status(200)
-          .header({ token: token })
+          .header({ authToken: token })
           .send({
             user: { id: _id, email: email, name: name, role: role },
             message: 'successful operation',

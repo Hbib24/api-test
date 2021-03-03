@@ -4,7 +4,7 @@ This project is used to test the skills of API developers.
 
 ## Instructions
 
-To run this application:
+To run this application open your terminal in the root folder:
 
 npm i
 
