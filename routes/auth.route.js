@@ -28,7 +28,8 @@ router.post('/', (req, res) => {
 
         const token = jwt.sign(
           {
-            id: _id,
+            userId: _id,
+            role: role,
           },
           process.env.SECRET,
           {
